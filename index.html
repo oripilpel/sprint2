@@ -25,11 +25,10 @@
     </header>
     <main class="main-content main-layout">
         <section class="saved-memes" hidden>
-
         </section>
         <section class="meme-editor" hidden>
             <canvas onmousedown="onDrag(event)" onmousemove="onMoveLine(event)" onmouseup="onCancelDrag()"
-                class="canvas" height="270.5" width="270.5"></canvas>
+                class="canvas" height="500" width="500"></canvas>
             <div class="controls">
                 <input onkeyup="onChangeText(this.value)" name="line" type="text" placeholder="your text here">
                 <button class="add-line-btn" onclick="onAddLine()"><img src="icons/add.png"></button>
@@ -57,6 +56,10 @@
         </section>
 
         <section class="photo-gallery">
+            <div class="search-bar main-layout">
+                <input type="text" name="search" placeholder="Search..">
+                <button type="submit"><img src="icons/search-icon.png" alt=""></button>
+            </div>
             <div class="gallery"></div>
         </section>
     </main>

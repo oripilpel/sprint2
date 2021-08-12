@@ -7,6 +7,7 @@ function onMemesClick() {
     document.querySelector('.meme-editor').classList.remove('show');
     document.querySelector('.saved-memes').style.display = 'grid';
     document.querySelector('.photo-gallery').style.display = 'none';
+    gEditIndex = -1;
     renderSavedMemes()
 }
 
@@ -53,6 +54,5 @@ function onSave() {
         gSavedMemes[gEditIndex].img = gCanvas.toDataURL()
         gSavedMemes[gEditIndex].meme = JSON.parse(JSON.stringify(getMeme()))
     }
-    gEditIndex = -1;
     saveMemes()
 }

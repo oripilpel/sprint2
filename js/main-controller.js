@@ -32,8 +32,9 @@ function createPics() {
 function onGalleryClick() {
     document.querySelector('.meme-editor').classList.remove('show');
     document.querySelector('.saved-memes').style.display = 'none';
-    document.querySelector('.photo-gallery').style.display = 'flex';
+    document.querySelector('.photo-gallery').style.display = 'block';
     document.querySelector('[name="line"]').value = '';
+    gEditIndex = -1;
 }
 
 function onImgClick(elImg, isEdit) {
