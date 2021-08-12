@@ -5,6 +5,7 @@ const gMeme = {};
 function setMeme(elImg) {
     gMeme.selectedImgId = +elImg.dataset.imgnum
     gMeme.selectedLineIdx = 0;
+    gMeme.lines = [];
 }
 
 function addLine() {
@@ -21,6 +22,7 @@ function ChangeFontSize(diff) {
 }
 
 function switchLine() {
+    if (!gMeme.lines || !gMeme.lines.length) return
     if (gMeme.selectedLineIdx >= gMeme.lines.length - 1) gMeme.selectedLineIdx = 0;
     else gMeme.selectedLineIdx++
 }
@@ -55,7 +57,7 @@ function changeText(text) {
 }
 
 function textAlign(direction) {
-    if (!gMeme.lines) return
+    if (!gMeme.lines || !gMeme.lines.length) return
     const currLine = gMeme.lines[gMeme.selectedLineIdx]
     switch (direction) {
         case 'right':

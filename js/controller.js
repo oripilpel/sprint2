@@ -1,15 +1,16 @@
 'use-strict'
 
 let gImgs;
-let gStyleOpts;
 let gCanvas;
 let gCtx;
+let gStyleOpts;
 
 
 function onInit() {
     createPics()
     renderPics()
     setCanvas()
+    gStyleOpts = { font: 'Impact' }
 }
 
 function renderPics() {
@@ -29,6 +30,7 @@ function createPics() {
 function onGalleryClick() {
     document.querySelector('.meme-editor').classList.remove('show');
     document.querySelector('.photo-gallery').style.display = 'flex';
+    document.querySelector('[name="line"]').value = '';
 }
 
 function onImgClick(elImg) {
@@ -54,22 +56,23 @@ function onChangeFontSize(diff) {
 
 function onSwitchLine() {
     switchLine();
+    const meme = getMeme();
+    const elInput = document.querySelector('[name="line"]')
+    elInput.value = (!meme.lines || !meme.lines.length) ? '' : meme.lines[meme.selectedLineIdx].txt
     renderCanvas()
 }
 
 function onChangeText(text) {
-    if (!text.trim()) return
     changeText(text);
     renderCanvas()
 }
 
 function onAlignText(direction) {
     textAlign(direction)
-
     renderCanvas()
 }
 
-function renderCanvas() {
+function renderCanvas(isDownloading) {
     const meme = getMeme();
     gCtx.clearRect(0, 0, gCanvas.height, gCanvas.width)
     drawImg(getElImage(meme.selectedImgId))
@@ -77,12 +80,12 @@ function renderCanvas() {
     meme.lines.forEach((line, idx) => {
         setAlign(line.align);
         gCtx.save();
-        gCtx.font = `${line.size}px Impact`
+        gCtx.font = `${line.size}px ${gStyleOpts.font}`
         gCtx.lineWidth = 4;
         gCtx.strokeText(line.txt, line.x, line.y);
         gCtx.fillStyle = 'white';
         gCtx.fillText(line.txt, line.x, line.y);
-        if (meme.selectedLineIdx === idx) markChoosenLine(line)
+        if (meme.selectedLineIdx === idx && !isDownloading) markChoosenLine(line)
     })
 }
 
@@ -123,6 +126,9 @@ function setAlign(direction) {
 
 function markChoosenLine(line) {
     const txtWidth = gCtx.measureText(line.txt).width;
+    gCtx.save()
+    gCtx.strokeStyle = '#ffffff'
+    gCtx.lineWidth = 3;
     gCtx.beginPath();
     switch (line.align) {
         case 'right':
@@ -137,12 +143,27 @@ function markChoosenLine(line) {
     }
     gCtx.strokeRect(rectStart - 5, line.y - line.size, txtWidth + 10, line.size + 5)
     gCtx.closePath();
+    gCtx.restore()
+
 }
 
 function onRemoveLine() {
     const meme = getMeme();
-    if (!meme.lines) return;
+    if (!meme.lines || !meme.lines.length) return
+    if (meme.lines.length === 1) document.querySelector('[name="line"]').value = ''
     meme.lines.splice(meme.selectedLineIdx, 1);
     switchLine()
+    renderCanvas()
+}
+
+function onSelectFont(font) {
+    gStyleOpts.font = font;
+    renderCanvas();
+}
+
+function onDownload(elLink) {
+    renderCanvas(true)
+    const data = gCanvas.toDataURL()
+    elLink.href = data;
     renderCanvas()
 }
