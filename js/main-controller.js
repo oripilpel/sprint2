@@ -10,6 +10,7 @@ function onInit() {
     createPics()
     renderPics()
     setCanvas()
+    loadMemes()
     gStyleOpts = { font: 'Impact' }
 }
 
@@ -29,15 +30,17 @@ function createPics() {
 
 function onGalleryClick() {
     document.querySelector('.meme-editor').classList.remove('show');
+    document.querySelector('.saved-memes').style.display = 'none';
     document.querySelector('.photo-gallery').style.display = 'flex';
     document.querySelector('[name="line"]').value = '';
 }
 
-function onImgClick(elImg) {
+function onImgClick(elImg, isEdit) {
     document.querySelector('.meme-editor').classList.add('show');
+    document.querySelector('.saved-memes').style.display = 'none';
     document.querySelector('.photo-gallery').style.display = 'none';
     drawImg(elImg)
-    setMeme(elImg)
+    setMeme(elImg, isEdit)
     renderCanvas()
 }
 

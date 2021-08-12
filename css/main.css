@@ -25,6 +25,10 @@ body {
     margin: 0;
 }
 
+.header-container .main-nav a:hover {
+    transform: translateY(-10%);
+}
+
 .header-container .main-nav a {
     text-decoration: none;
     font-family: Montserrat;
@@ -34,11 +38,8 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    transition: transform .2s;
 }
-
-/* .header-container .main-nav a:last-of-type {
-    padding-right: 5px;
-} */
 
 .header-container .main-nav a:not(:last-of-type) {
     border-right: #BAB1A9 1px solid;
@@ -91,8 +92,16 @@ body {
 .controls {
     display: grid;
     grid-template-columns: repeat(5, 28.2px);
-    grid-template-areas: "txt txt txt txt txt" ". switch add remove . " "increase-font decrease-font align-left align-center align-right" "font font font stroke paint" "icon icon icon icon icon" "download download . share share";
+    grid-template-areas: "txt txt txt txt txt" ". switch add remove . " "increase-font decrease-font align-left align-center align-right" "font font font stroke paint" "icon icon icon icon icon" "download download save share share";
     gap: 9px;
+}
+
+.meme-editor a:hover {
+    transform: translateY(-10%);
+}
+
+.meme-editor button:hover {
+    transform: translateY(-10%);
 }
 
 .meme-editor button {
@@ -104,6 +113,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: transform .2s;
 }
 
 .meme-editor button img {
@@ -127,6 +139,8 @@ footer small {
 
 [name="line"] {
     grid-area: txt;
+    border-radius: 0.375rem;
+    border: none;
 }
 
 .add-line-btn {
@@ -163,19 +177,30 @@ footer small {
 
 [name=font-selection] {
     grid-area: font;
+    border-radius: 0.375rem;
+    border: none;
 }
 
-.meme-editor .download-btn {
-    grid-area: download;
+.meme-editor a {
     color: white;
     background-color: #ff7518;
     font-family: Montserrat;
     font-size: 0.625rem;
     width: 100%;
-    line-height: 12px;
+    line-height: 0.75rem;
     border-radius: 0.375rem;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
+    transition: transform .2s;
+    cursor: pointer;
+}
+
+.meme-editor .save-btn {
+    grid-area: save;
+}
+
+.meme-editor .download-btn {
+    grid-area: download;
 }

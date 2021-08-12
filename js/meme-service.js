@@ -1,11 +1,11 @@
 'use-strict'
 
-const gMeme = {};
+let gMeme = {};
 
-function setMeme(elImg) {
+function setMeme(elImg, isEdit) {
     gMeme.selectedImgId = +elImg.dataset.imgnum
     gMeme.selectedLineIdx = 0;
-    gMeme.lines = [];
+    if (!isEdit) gMeme.lines = [];
 }
 
 function addLine() {
@@ -73,4 +73,8 @@ function textAlign(direction) {
             currLine.align = 'center'
             break;
     }
+}
+
+function reSetMeme(meme) {
+    gMeme = meme
 }

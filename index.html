@@ -19,11 +19,14 @@
             </div>
             <nav class="main-nav">
                 <a onclick="onGalleryClick()">gallery</a>
-                <a>memes</a>
+                <a onclick="onMemesClick()">memes</a>
             </nav>
         </div>
     </header>
     <main class="main-content main-layout">
+        <section class="saved-memes" hidden>
+
+        </section>
         <section class="meme-editor" hidden>
             <canvas class="canvas" height="270.5" width="270.5"></canvas>
             <div class="controls">
@@ -43,6 +46,7 @@
                         src="icons/align-to-right.png"></button>
                 <button class="remove-btn" onclick="onRemoveLine()"><img src=" icons/trash.png"></button>
                 <a class="download-btn" onclick="onDownload(this)" href="" download="myphoto">Download</a>
+                <a class="save-btn" onclick="onSave()">Save</a>
                 <select name="font-selection" onchange="onSelectFont(this.value)">
                     <option value="Impact">Impact</option>
                     <option value="Arial">Arial</option>
@@ -65,7 +69,8 @@
     </footer>
     <script src="js/storage-service.js"></script>
     <script src="js/meme-service.js"></script>
-    <script src="js/controller.js"></script>
+    <script src="js/main-controller.js"></script>
+    <script src="js/memes-controller.js"></script>
 </body>
 
 </html>
