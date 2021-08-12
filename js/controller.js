@@ -143,7 +143,6 @@ function onRemoveLine() {
     const meme = getMeme();
     if (!meme.lines) return;
     meme.lines.splice(meme.selectedLineIdx, 1);
-
     switchLine()
     renderCanvas()
 }

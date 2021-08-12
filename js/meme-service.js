@@ -11,10 +11,12 @@ function addLine() {
     gMeme.selectedLineIdx++
 }
 
-function getMeme() { return gMeme }
+function getMeme() {
+    return gMeme
+}
 
 function ChangeFontSize(diff) {
-    if(!gMeme.lines||!gMeme.lines.length)return
+    if (!gMeme.lines || !gMeme.lines.length) return
     gMeme.lines[gMeme.selectedLineIdx].size += diff;
 }
 
