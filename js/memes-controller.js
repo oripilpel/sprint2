@@ -53,6 +53,8 @@ function loadMemes() {
 function onSave() {
     renderCanvas(true)
     const data = gCanvas.toDataURL()
-    gSavedMemes.push({ img: data, meme: getMeme() })
+    gSavedMemes.push({
+        img: data, meme: JSON.parse(JSON.stringify(getMeme()))
+    })
     saveMemes()
 }

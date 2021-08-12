@@ -4,6 +4,7 @@ let gImgs;
 let gCanvas;
 let gCtx;
 let gStyleOpts;
+let gIsDrag;
 
 
 function onInit() {
@@ -129,6 +130,7 @@ function setAlign(direction) {
 
 function markChoosenLine(line) {
     const txtWidth = gCtx.measureText(line.txt).width;
+    line.width = txtWidth;
     gCtx.save()
     gCtx.strokeStyle = '#ffffff'
     gCtx.lineWidth = 3;
@@ -169,4 +171,43 @@ function onDownload(elLink) {
     const data = gCanvas.toDataURL()
     elLink.href = data;
     renderCanvas()
+}
+
+function onDrag(ev) {
+    const pos = { x: ev.offsetX, y: ev.offsetY }
+    const meme = getMeme();
+    meme.lines.forEach((line, idx) => {
+        let txtXStart;
+        switch (line.align) {
+            case 'left':
+                txtXStart = line.x
+                break;
+            case 'center':
+                txtXStart = line.x - line.width / 2
+                break;
+            case 'right':
+                txtXStart = line.x - line.width
+                break;
+        }
+        if (pos.x >= txtXStart && pos.x <= txtXStart + line.width && pos.y <= line.y && pos.y >= line.y - line.size) {
+            meme.selectedLineIdx = idx
+            renderCanvas()
+            gIsDrag = true;
+            return
+        }
+    })
+}
+
+function onMoveLine(ev) {
+    if (!gIsDrag) return
+    const pos = { x: ev.offsetX, y: ev.offsetY }
+    const meme = getMeme()
+    const currLine = meme.lines[meme.selectedLineIdx]
+    currLine.x = pos.x
+    currLine.y = pos.y
+    renderCanvas()
+}
+
+function onCancelDrag() {
+    gIsDrag = false
 }
