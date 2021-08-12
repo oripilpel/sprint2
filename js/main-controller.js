@@ -41,6 +41,7 @@ function onImgClick(elImg, isEdit) {
     document.querySelector('.meme-editor').classList.add('show');
     document.querySelector('.saved-memes').style.display = 'none';
     document.querySelector('.photo-gallery').style.display = 'none';
+    resizeCanvas(elImg)
     drawImg(elImg)
     setMeme(elImg, isEdit)
     renderCanvas()
@@ -104,7 +105,7 @@ function getElImage(imgId) {
 }
 
 function drawImg(elImg) {
-    gCtx.drawImage(elImg, 0, 0, gCanvas.height, gCanvas.width)
+    gCtx.drawImage(elImg, 0, 0, gCanvas.width, gCanvas.height)
 }
 
 function getCanvasWidth() {
@@ -211,4 +212,10 @@ function onMoveLine(ev) {
 
 function onCancelDrag() {
     gIsDrag = false
+}
+
+function resizeCanvas(elImg) {
+    const imgH = elImg.height
+    const imgW = elImg.width
+    gCanvas.height = gCanvas.width * imgH / imgW;
 }
