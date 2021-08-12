@@ -1,6 +1,7 @@
 'use strict'
 
 let gSavedMemes = [];
+let gEditIndex = -1;
 
 function onMemesClick() {
     document.querySelector('.meme-editor').classList.remove('show');
@@ -11,29 +12,19 @@ function onMemesClick() {
 
 function renderSavedMemes() {
     var elSavedMemes = document.querySelector('.saved-memes');
-    elSavedMemes.innerHTML = ''
-    gSavedMemes.forEach((data, idx) => {
-        const image = new Image();
-        image.src = data.img;
-        const newDiv = document.createElement("div");
-        newDiv.classList.add(`card-${idx}`);
-        newDiv.appendChild(image)
-        const elEditBtn = document.createElement("a");
-        elEditBtn.textContent = 'Edit'
-        elEditBtn.setAttribute('class', 'edit-meme-btn')
-        elEditBtn.setAttribute('onclick', `onEditMeme(${idx})`)
-        const elDownloadBtn = document.createElement("a");
-        elDownloadBtn.textContent = 'Download'
-        elDownloadBtn.setAttribute('class', 'download-meme-btn')
-        elDownloadBtn.setAttribute('href', data.img)
-        elDownloadBtn.setAttribute('download', 'myphoto')
-        newDiv.appendChild(elDownloadBtn)
-        newDiv.appendChild(elEditBtn)
-        elSavedMemes.appendChild(newDiv)
-    })
+    elSavedMemes.innerHTML = '';
+    let html = gSavedMemes.map((meme, idx) => {
+        return `<div class="card=${idx}">
+        <img src="${meme.img}">
+        <a class="download-meme-btn" href="${meme.img}" download="Meme">Download</a>
+        <a class="edit-meme-btn" onclick="onEditMeme(${idx})">Edit</a>
+        </div>`
+    }).join('');
+    elSavedMemes.innerHTML = html;
 }
 
 function onEditMeme(index) {
+    gEditIndex = index;
     reSetMeme(gSavedMemes[index].meme);
     const meme = getMeme()
     const elImg = getElImage(meme.selectedImgId)
@@ -52,9 +43,16 @@ function loadMemes() {
 
 function onSave() {
     renderCanvas(true)
-    const data = gCanvas.toDataURL()
-    gSavedMemes.push({
-        img: data, meme: JSON.parse(JSON.stringify(getMeme()))
-    })
+    if (gEditIndex < 0) {
+        const data = gCanvas.toDataURL()
+        gSavedMemes.push({
+            img: data, meme: JSON.parse(JSON.stringify(getMeme()))
+        })
+    }
+    else {
+        gSavedMemes[gEditIndex].img = gCanvas.toDataURL()
+        gSavedMemes[gEditIndex].meme = JSON.parse(JSON.stringify(getMeme()))
+    }
+    gEditIndex = -1;
     saveMemes()
 }
