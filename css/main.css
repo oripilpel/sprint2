@@ -1,0 +1,158 @@
+@font-face {
+    font-family: Montserrat;
+    src: url(/fonts/Montserrat.ttf);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #ff7518
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.main-layout {
+    width: 600px;
+    margin: auto;
+}
+
+body {
+    margin: 0;
+}
+
+.header-container .main-nav a {
+    text-decoration: none;
+    font-family: Montserrat;
+    padding: 10.5px;
+    display: inline-flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* .header-container .main-nav a:last-of-type {
+    padding-right: 5px;
+} */
+
+.header-container .main-nav a:not(:last-of-type) {
+    border-right: #BAB1A9 1px solid;
+}
+
+.logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding-left: 5px;
+}
+
+.logo .secondary {
+    height: 10px;
+}
+
+.logo .main {
+    height: 25px;
+}
+
+.photo-gallery {
+    display: flex;
+}
+
+.gallery {
+    background-color: #e3e3e3;
+    margin: auto;
+    display: grid;
+    padding: 25px 26.25px;
+    gap: 10.5px 9px;
+    grid-template-columns: repeat(3, 176.5px);
+}
+
+.gallery img {
+    width: 176.5px;
+    height: 139px;
+    object-fit: cover;
+}
+
+.meme-editor {
+    background-color: #e3e3e3;
+    padding: 30px 0;
+    justify-content: space-around;
+}
+
+.meme-editor.show {
+    display: flex;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: repeat(5, 28.2px);
+    grid-template-areas: "txt txt txt txt txt" ". switch add remove . " "increase-font decrease-font align-left align-center align-right" "font font font stroke paint" "icon icon icon icon icon";
+    gap: 9px;
+}
+
+.meme-editor button {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 6px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.meme-editor button img {
+    height: 19.6px;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #ff7518;
+    padding: 20px 0;
+    font-family: Montserrat;
+    color: white;
+}
+
+footer small {
+    margin-top: 10px;
+}
+
+[name="line"] {
+    grid-area: txt;
+}
+
+.add-line-btn {
+    grid-area: add;
+}
+
+.switch-line-btn {
+    grid-area: switch;
+}
+
+.font-increase-btn {
+    grid-area: increase-font
+}
+
+.font-decrease-btn {
+    grid-area: decrease-font
+}
+
+.align-left-btn {
+    grid-area: align-left
+}
+
+.align-center-btn {
+    grid-area: align-center
+}
+
+.align-right-btn {
+    grid-area: align-right
+}

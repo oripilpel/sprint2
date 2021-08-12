@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEME GEN</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body onload="onInit()">
+    <header class="main-layout">
+        <div class="header-container main-layout">
+            <div class="logo">
+                <img class="main" src="logo/pilpel.png">
+                <img class="secondary" src="logo/spices.png">
+                <img src="" alt="">
+            </div>
+            <nav class="main-nav">
+                <a onclick="onGalleryClick()">gallery</a>
+                <a>memes</a>
+            </nav>
+        </div>
+    </header>
+    <main class="main-content main-layout">
+        <section class="meme-editor" hidden>
+            <canvas class="canvas" height="270.5" width="270.5"></canvas>
+            <div class="controls">
+                <input onkeyup="onChangeText(this.value)" name="line" type="text" placeholder="your text here">
+                <button class="add-line-btn" onclick="onAddLine()"><img src="icons/add.png"></button>
+                <button class="switch-line-btn" onclick="onSwitchLine()"><img
+                        src="icons/up-and-down-opposite-double-arrows-side-by-side.png"></button>
+                <button class="font-increase-btn" onclick="onChangeFontSize(2)"><img
+                        src="icons/increase font - icon.png"></button>
+                <button class="font-decrease-btn" onclick="onChangeFontSize(-2)"><img
+                        src="icons/decrease font - icon.png"></button>
+                <button class="align-left-btn" onclick="onAlignText('left')"><img
+                        src="icons/align-to-left.png"></button>
+                <button class="align-center-btn" onclick="onAlignText('center')"><img
+                        src="icons/center-text-alignment.png"></button>
+                <button class="align-right-btn" onclick="onAlignText('right')"><img
+                        src="icons/align-to-right.png"></button>
+                <button class="remove-btn" onclick="onRemoveLine()"><img src=" icons/trash.png"></button>
+            </div>
+        </section>
+
+        <section class="photo-gallery">
+            <div class="gallery"></div>
+        </section>
+    </main>
+    <footer class="main-layout">
+        <div class="logo">
+            <img class="main" src="logo/pilpel.png">
+            <img class="secondary" src="logo/spices.png">
+            <img src="" alt="">
+        </div>
+        <small>all rights reserved</small>
+    </footer>
+    <script src="js/storage-service.js"></script>
+    <script src="js/meme-service.js"></script>
+    <script src="js/controller.js"></script>
+</body>
+
+</html>
