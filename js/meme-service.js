@@ -78,3 +78,8 @@ function textAlign(direction) {
 function reSetMeme(meme) {
     gMeme = meme
 }
+
+function changeColor(color) {
+    if (!gMeme.lines || !gMeme.lines.length) return
+    gMeme.lines[gMeme.selectedLineIdx].color = color;
+}

@@ -47,6 +47,16 @@ function onImgClick(elImg, isEdit) {
     renderCanvas()
 }
 
+function onSelectColor() {
+    document.querySelector('#color').hidden = false;
+}
+
+function onChangeColor(color) {
+    document.querySelector('#color').hidden = true;
+    changeColor(color);
+    renderCanvas()
+}
+
 function onAddLine() {
     const elInput = document.querySelector('[name="line"]');
     if (!elInput.value.trim()) return
@@ -87,6 +97,7 @@ function renderCanvas(isDownloading) {
         setAlign(line.align);
         gCtx.save();
         gCtx.font = `${line.size}px ${gStyleOpts.font}`
+        gCtx.strokeStyle = line.color
         gCtx.lineWidth = 4;
         gCtx.strokeText(line.txt, line.x, line.y);
         gCtx.fillStyle = 'white';
