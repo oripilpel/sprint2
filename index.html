@@ -48,9 +48,9 @@
                 <a class="download-btn" onclick="onDownload(this)" href="" download="myphoto">Download</a>
                 <a class="save-btn" onclick="onSave()">Save</a>
                 <select name="font-selection" onchange="onSelectFont(this.value)">
-                    <option value="Impact">Impact</option>
-                    <option value="Arial">Arial</option>
-                    <option value="Verdana">Verdana</option>
+                    <option value="Impact">IMPACT</option>
+                    <option value="Arial">ARIAL</option>
+                    <option value="Verdana">VERDANA</option>
                 </select>
                 <button class="paint" onclick="onSelectColor()"><img src="icons/paint-board-and-brush.png"></button>
                 <input id="color" class="paint" type="color" hidden onchange="onChangeColor(this.value)">
@@ -59,8 +59,15 @@
 
         <section class="photo-gallery">
             <div class="search-bar main-layout">
-                <input type="text" name="search" placeholder="Search..">
-                <button type="submit"><img src="icons/search-icon.png" alt=""></button>
+                <input list="Categories" name="search">
+                <datalist id="Categories">
+                    <option value="Animals">
+                    <option value="TV">
+                    <option value="Politics">
+                    <option value="Children">
+                    <option value="Laugh">
+                </datalist>
+                <button onclick="onFilterPics()"><img src="icons/search-icon.png" alt=""></button>
             </div>
             <div class="gallery"></div>
         </section>

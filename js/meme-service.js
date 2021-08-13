@@ -49,6 +49,7 @@ function changeText(text) {
         line.x = getCanvasWidth() / 2
         line.align = 'center'
         line.size = 30
+        line.color = gStyleOpts.color
         gMeme.lines.push(line);
     }
     else {

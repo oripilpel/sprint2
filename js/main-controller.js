@@ -1,5 +1,5 @@
 'use-strict'
-
+const gKeywords = { TV: 1, Animals: 1, Politics: 1, Children: 1, Laugh: 1 }
 let gImgs;
 let gCanvas;
 let gCtx;
@@ -12,20 +12,38 @@ function onInit() {
     renderPics()
     setCanvas()
     loadMemes()
-    gStyleOpts = { font: 'Impact' }
+    gStyleOpts = { font: 'Impact', color: 'black' }
 }
 
-function renderPics() {
+function renderPics(filter) {
     const elGallery = document.querySelector('.gallery');
-    gImgs.forEach((img, idx) => {
+    elGallery.innerHTML = ''
+    let imgs;
+    if (filter) {
+        imgs = gImgs.filter(img => {
+            return img.categories.includes(filter)
+        })
+    } else imgs = gImgs
+    imgs.forEach((img, idx) => {
         elGallery.innerHTML += `<img data-imgNum=${idx + 1} onclick="onImgClick(this)" src="${img.url}">`
     })
 }
 
 function createPics() {
     gImgs = []
-    for (var i = 1; i < 26; i++) {
-        gImgs.push({ id: i, url: `img/${i}.jpg` })
+    const cats = {
+        TV: [1, 7, 10, 11, 12, 18, 19, 20, 21, 22, 24],
+        Animals: [3, 4, 6, 16],
+        Politics: [2, 14, 17, 23],
+        Children: [4, 5, 8, 13, 15],
+        Laugh: [8, 17, 22]
+    }
+    for (var i = 1; i < 25; i++) {
+        var categories = [];
+        for (cat in cats) {
+            if (cats[cat].includes(i)) categories.push(cat)
+        }
+        gImgs.push({ id: i, url: `img/${i}.jpg`, categories })
     }
 }
 
@@ -53,6 +71,7 @@ function onSelectColor() {
 
 function onChangeColor(color) {
     document.querySelector('#color').hidden = true;
+    gStyleOpts.color = color
     changeColor(color);
     renderCanvas()
 }
@@ -204,6 +223,7 @@ function onDrag(ev) {
         }
         if (pos.x >= txtXStart && pos.x <= txtXStart + line.width && pos.y <= line.y && pos.y >= line.y - line.size) {
             meme.selectedLineIdx = idx
+            document.querySelector('[name="line"]').value = line.txt
             renderCanvas()
             gIsDrag = true;
             return
@@ -229,4 +249,10 @@ function resizeCanvas(elImg) {
     const imgH = elImg.height
     const imgW = elImg.width
     gCanvas.height = gCanvas.width * imgH / imgW;
+}
+
+function onFilterPics() {
+    const filterText = document.querySelector('[name="search"]').value.trim()
+    if(gKeywords[filterText])gKeywords[filterText]++
+    renderPics(filterText)
 }

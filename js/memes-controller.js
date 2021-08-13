@@ -13,11 +13,18 @@ function onMemesClick() {
 
 function renderSavedMemes() {
     var elSavedMemes = document.querySelector('.saved-memes');
+    // if (gSavedMemes.length === 0) {
+    //     const elH2 = document.createElement('h2')
+    //     elH2.textContent = 'Save Memes To Show Here'
+    //     elSavedMemes.appendChild(elH2)
+    //     return
+    // }
     elSavedMemes.innerHTML = '';
     let html = gSavedMemes.map((meme, idx) => {
         return `<div class="card=${idx}">
         <img src="${meme.img}">
         <a class="download-meme-btn" href="${meme.img}" download="Meme">Download</a>
+        <a class="remove-meme-btn" onclick="onRemoveMeme(${idx})">Remove</a>
         <a class="edit-meme-btn" onclick="onEditMeme(${idx})">Edit</a>
         </div>`
     }).join('');
@@ -55,4 +62,10 @@ function onSave() {
         gSavedMemes[gEditIndex].meme = JSON.parse(JSON.stringify(getMeme()))
     }
     saveMemes()
+}
+
+function onRemoveMeme(idx) {
+    gSavedMemes.splice(idx, 1)
+    saveMemes()
+    renderSavedMemes()
 }
