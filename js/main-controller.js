@@ -1,10 +1,11 @@
 'use-strict'
-const gKeywords = { tv: 1, animals: 1, politics: 1, children: 1, laugh: 1 }
+const gKeywords = { all: 1, tv: 1, animals: 1, politics: 1, children: 1, laugh: 1 }
 let gImgs;
 let gCanvas;
 let gCtx;
 let gStyleOpts;
-let gIsDrag;
+const gIsDrag = { line: false, sticker: false };
+let gStickersPage = 0;
 
 
 function onInit() {
@@ -13,7 +14,8 @@ function onInit() {
     setCanvas()
     loadMemes()
     renderWords()
-    gStyleOpts = { font: 'Impact', color: 'black' }
+    renderStickers()
+    gStyleOpts = { font: 'Impact', color: 'white' }
 }
 
 function renderWords() {
@@ -27,7 +29,7 @@ function renderWords() {
 function renderPics(filter) {
     const elGallery = document.querySelector('.gallery');
     let imgs;
-    if (filter) {
+    if (filter && filter !== 'all') {
         imgs = gImgs.filter(img => {
             return img.categories.includes(filter)
         })
@@ -124,13 +126,19 @@ function renderCanvas(isDownloading) {
         setAlign(line.align);
         gCtx.save();
         gCtx.font = `${line.size}px ${gStyleOpts.font}`
-        gCtx.strokeStyle = line.color
+        gCtx.fillStyle = line.color
         gCtx.lineWidth = 4;
         gCtx.strokeText(line.txt, line.x, line.y);
-        gCtx.fillStyle = 'white';
         gCtx.fillText(line.txt, line.x, line.y);
         if (meme.selectedLineIdx === idx && !isDownloading) markChoosenLine(line)
     })
+    if (meme.stickers && meme.stickers.length) {
+        meme.stickers.forEach(sticker => {
+            const img = new Image();
+            img.src = sticker.src
+            gCtx.drawImage(img, sticker.x, sticker.y, sticker.size, sticker.size)
+        })
+    }
 }
 
 function setCanvas() {
@@ -233,24 +241,41 @@ function onDrag(ev) {
             meme.selectedLineIdx = idx
             document.querySelector('[name="line"]').value = line.txt
             renderCanvas()
-            gIsDrag = true;
+            gIsDrag.line = true;
             return
         }
     })
+    meme.stickers.forEach((sticker, idx) => {
+        if (pos.x >= sticker.x && pos.x <= sticker.x + sticker.size && pos.y >= sticker.y && pos.y <= sticker.y + sticker.size) {
+            meme.selectedStickerIdx = idx
+            renderCanvas()
+            gIsDrag.sticker = true;
+            return
+        }
+    })
+
 }
 
-function onMoveLine(ev) {
-    if (!gIsDrag) return
+function onMoveItem(ev) {
+    if (!gIsDrag.line && !gIsDrag.sticker) return
     const pos = { x: ev.offsetX, y: ev.offsetY }
     const meme = getMeme()
-    const currLine = meme.lines[meme.selectedLineIdx]
-    currLine.x = pos.x
-    currLine.y = pos.y
+    if (gIsDrag.line) {
+        const currLine = meme.lines[meme.selectedLineIdx]
+        currLine.x = pos.x
+        currLine.y = pos.y
+    }
+    else {
+        const currSticker = meme.stickers[meme.selectedStickerIdx]
+        currSticker.x = pos.x
+        currSticker.y = pos.y
+    }
     renderCanvas()
 }
 
 function onCancelDrag() {
-    gIsDrag = false
+    gIsDrag.line = false
+    gIsDrag.sticker = false
 }
 
 function resizeCanvas(elImg) {
@@ -268,4 +293,23 @@ function onFilterPics(filter) {
         elSearch.value = filter
     }
     renderPics(filter)
+}
+
+function renderStickers() {
+    const elStickers = document.querySelector('.stickers-container')
+    elStickers.innerHTML = ''
+    for (let i = (gStickersPage * 3); i < (gStickersPage * 3) + 3; i++) {
+        elStickers.innerHTML += `<img onclick="onStickerClick(this)" src="stickers/${i + 1}.png">`
+    }
+}
+
+function onStickerClick(elSticker) {
+    addSticker(elSticker)
+    renderCanvas()
+}
+
+function onChangeStickerPage() {
+    if (gStickersPage) gStickersPage = 0
+    else gStickersPage = 1
+    renderStickers()
 }

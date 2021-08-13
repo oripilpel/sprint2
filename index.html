@@ -27,7 +27,7 @@
         <section class="saved-memes main-layout" hidden>
         </section>
         <section class="meme-editor" hidden>
-            <canvas onmousedown="onDrag(event)" onmousemove="onMoveLine(event)" onmouseup="onCancelDrag()"
+            <canvas onmousedown="onDrag(event)" onmousemove="onMoveItem(event)" onmouseup="onCancelDrag()"
                 class="canvas" height="500" width="500"></canvas>
             <div class="controls">
                 <input onkeyup="onChangeText(this.value)" name="line" type="text" placeholder="your text here">
@@ -53,7 +53,13 @@
                     <option value="Verdana">VERDANA</option>
                 </select>
                 <button class="paint" onclick="onSelectColor()"><img src="icons/paint-board-and-brush.png"></button>
-                <input id="color" class="paint" type="color" hidden onchange="onChangeColor(this.value)">
+                <input id="color" class="paint" type="color" hidden onchange="onChangeColor(this.value)"
+                    value="#ffffff">
+                <div class="stickers-gallery">
+                    <img class="left-arrow" onclick="onChangeStickerPage()" src="icons/right-arrow.png">
+                    <div class="stickers-container"></div>
+                    <img class="right-arrow" onclick="onChangeStickerPage()" src="icons/right-arrow.png">
+                </div>
             </div>
         </section>
 

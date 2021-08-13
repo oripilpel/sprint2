@@ -5,7 +5,11 @@ let gMeme = {};
 function setMeme(elImg, isEdit) {
     gMeme.selectedImgId = +elImg.dataset.imgnum
     gMeme.selectedLineIdx = 0;
-    if (!isEdit) gMeme.lines = [];
+    gMeme.selectedStickerIdx = 0;
+    if (!isEdit) {
+        gMeme.lines = [];
+        gMeme.stickers = []
+    }
 }
 
 function addLine() {
@@ -83,4 +87,8 @@ function reSetMeme(meme) {
 function changeColor(color) {
     if (!gMeme.lines || !gMeme.lines.length) return
     gMeme.lines[gMeme.selectedLineIdx].color = color;
+}
+
+function addSticker(elImg) {
+    gMeme.stickers.push({ src: elImg.src, x: (getCanvasWidth() / 2) - 20, y: (getCanvasHeight() / 2) - 20, size: 40 })
 }

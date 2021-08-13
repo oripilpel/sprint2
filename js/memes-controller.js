@@ -13,12 +13,14 @@ function onMemesClick() {
 
 function renderSavedMemes() {
     var elSavedMemes = document.querySelector('.saved-memes');
-    // if (gSavedMemes.length === 0) {
-    //     const elH2 = document.createElement('h2')
-    //     elH2.textContent = 'Save Memes To Show Here'
-    //     elSavedMemes.appendChild(elH2)
-    //     return
-    // }
+    if (gSavedMemes.length === 0) {
+        elSavedMemes.innerHTML = ''
+        elSavedMemes.style.display = "block"
+        const elH2 = document.createElement('h2')
+        elH2.textContent = 'Save Memes To Show Here'
+        elSavedMemes.appendChild(elH2)
+        return
+    }
     elSavedMemes.innerHTML = '';
     let html = gSavedMemes.map((meme, idx) => {
         return `<div class="card=${idx}">
@@ -52,7 +54,7 @@ function loadMemes() {
 function onSave() {
     renderCanvas(true)
     if (gEditIndex < 0) {
-        const data = gCanvas.toDataURL()
+        const data = gCanvas.toDataURL('image/jpeg', 1)
         gSavedMemes.push({
             img: data, meme: JSON.parse(JSON.stringify(getMeme()))
         })
