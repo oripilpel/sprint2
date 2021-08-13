@@ -1,5 +1,5 @@
 'use-strict'
-const gKeywords = { TV: 1, Animals: 1, Politics: 1, Children: 1, Laugh: 1 }
+const gKeywords = { tv: 1, animals: 1, politics: 1, children: 1, laugh: 1 }
 let gImgs;
 let gCanvas;
 let gCtx;
@@ -12,31 +12,39 @@ function onInit() {
     renderPics()
     setCanvas()
     loadMemes()
+    renderWords()
     gStyleOpts = { font: 'Impact', color: 'black' }
+}
+
+function renderWords() {
+    const elWordContainer = document.querySelector('.word-list');
+    elWordContainer.innerHTML = ''
+    for (word in gKeywords) {
+        elWordContainer.innerHTML += `<a class="keyword" style="font-size:${(gKeywords[word] * 5) + 11}px" onclick="onFilterPics('${word}')">${word}</a>`
+    }
 }
 
 function renderPics(filter) {
     const elGallery = document.querySelector('.gallery');
-    elGallery.innerHTML = ''
     let imgs;
     if (filter) {
         imgs = gImgs.filter(img => {
             return img.categories.includes(filter)
         })
     } else imgs = gImgs
-    imgs.forEach((img, idx) => {
-        elGallery.innerHTML += `<img data-imgNum=${idx + 1} onclick="onImgClick(this)" src="${img.url}">`
-    })
+    elGallery.innerHTML = imgs.map((img, idx) => {
+        return `<img data-imgNum=${idx + 1} onclick="onImgClick(this)" src="${img.url}">`
+    }).join('')
 }
 
 function createPics() {
     gImgs = []
     const cats = {
-        TV: [1, 7, 10, 11, 12, 18, 19, 20, 21, 22, 24],
-        Animals: [3, 4, 6, 16],
-        Politics: [2, 14, 17, 23],
-        Children: [4, 5, 8, 13, 15],
-        Laugh: [8, 17, 22]
+        tv: [1, 7, 10, 11, 12, 18, 19, 20, 21, 22, 24],
+        animals: [3, 4, 6, 16],
+        politics: [2, 14, 17, 23],
+        children: [4, 5, 8, 13, 15],
+        laugh: [8, 17, 22]
     }
     for (var i = 1; i < 25; i++) {
         var categories = [];
@@ -251,8 +259,13 @@ function resizeCanvas(elImg) {
     gCanvas.height = gCanvas.width * imgH / imgW;
 }
 
-function onFilterPics() {
-    const filterText = document.querySelector('[name="search"]').value.trim()
-    if(gKeywords[filterText])gKeywords[filterText]++
-    renderPics(filterText)
+function onFilterPics(filter) {
+    const elSearch = document.querySelector('[name="search"]')
+    if (gKeywords[filter] && gKeywords[filter] < 8) gKeywords[filter]++
+    if (!filter) filter = elSearch.value.trim()
+    else {
+        renderWords()
+        elSearch.value = filter
+    }
+    renderPics(filter)
 }

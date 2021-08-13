@@ -207,9 +207,27 @@ footer small {
     grid-area: download;
 }
 
+.search {
+    display: flex;
+    padding: 20px 0;
+}
+
+.word-list {
+    display: flex;
+}
+
+.word-list a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    font-family: Montserrat;
+    cursor: pointer;
+}
+
 .search-bar {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
 }
 
 .search-bar img {
@@ -221,7 +239,6 @@ footer small {
     background-color: white;
     border: none;
     border-bottom: 2px solid black;
-    cursor: pointer;
 }
 
 [name="search"] {

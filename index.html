@@ -59,15 +59,19 @@
 
         <section class="photo-gallery">
             <div class="search-bar main-layout">
-                <input list="Categories" name="search">
-                <datalist id="Categories">
-                    <option value="Animals">
-                    <option value="TV">
-                    <option value="Politics">
-                    <option value="Children">
-                    <option value="Laugh">
-                </datalist>
-                <button onclick="onFilterPics()"><img src="icons/search-icon.png" alt=""></button>
+                <div class="word-list">
+                </div>
+                <div class="search">
+                    <input list="Categories" name="search" onkeyup="onFilterPics()">
+                    <datalist id="Categories">
+                        <option value="animals">
+                        <option value="tv">
+                        <option value="politics">
+                        <option value="children">
+                        <option value="laugh">
+                    </datalist>
+                    <button><img src="icons/search-icon.png" alt=""></button>
+                </div>
             </div>
             <div class="gallery"></div>
         </section>
