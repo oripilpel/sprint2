@@ -338,4 +338,5 @@ footer small {
 
 .remove-meme-btn {
     grid-area: remove-meme;
+    justify-self: center;
 }

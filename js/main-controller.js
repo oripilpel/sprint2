@@ -4,7 +4,7 @@ let gImgs;
 let gCanvas;
 let gCtx;
 let gStyleOpts;
-const gIsDrag = { line: false, sticker: false };
+const gItemPressed = { line: false, sticker: false, 'sticker-resize': false };
 let gStickersPage = 0;
 
 
@@ -137,9 +137,17 @@ function renderCanvas(isDownloading) {
             const img = new Image();
             img.src = sticker.src
             gCtx.drawImage(img, sticker.x, sticker.y, sticker.size, sticker.size)
+            gCtx.beginPath();
+            if (!isDownloading) {
+                gCtx.arc(sticker.x + sticker.size + 7, sticker.y + sticker.size + 7, 7, 0, 2 * Math.PI);
+                gCtx.fillStyle = 'pink'
+                gCtx.fill();
+            }
         })
     }
 }
+
+
 
 function setCanvas() {
     gCanvas = document.querySelector('.canvas')
@@ -221,7 +229,7 @@ function onDownload(elLink) {
     renderCanvas()
 }
 
-function onDrag(ev) {
+function onMousePress(ev) {
     const pos = { x: ev.offsetX, y: ev.offsetY }
     const meme = getMeme();
     meme.lines.forEach((line, idx) => {
@@ -241,15 +249,19 @@ function onDrag(ev) {
             meme.selectedLineIdx = idx
             document.querySelector('[name="line"]').value = line.txt
             renderCanvas()
-            gIsDrag.line = true;
+            gItemPressed.line = true;
             return
         }
     })
     meme.stickers.forEach((sticker, idx) => {
+        if (pos.x >= sticker.x + sticker.size && pos.x <= sticker.x + sticker.size + 14 && pos.y >= sticker.y + sticker.size && pos.y <= sticker.y + sticker.size + 14) {
+            gItemPressed["sticker-resize"] = true;
+            meme.selectedStickerIdx = idx;
+            return;
+        }
         if (pos.x >= sticker.x && pos.x <= sticker.x + sticker.size && pos.y >= sticker.y && pos.y <= sticker.y + sticker.size) {
             meme.selectedStickerIdx = idx
-            renderCanvas()
-            gIsDrag.sticker = true;
+            gItemPressed.sticker = true;
             return
         }
     })
@@ -257,25 +269,30 @@ function onDrag(ev) {
 }
 
 function onMoveItem(ev) {
-    if (!gIsDrag.line && !gIsDrag.sticker) return
+    if (!gItemPressed.line && !gItemPressed.sticker && !gItemPressed["sticker-resize"]) return
     const pos = { x: ev.offsetX, y: ev.offsetY }
     const meme = getMeme()
-    if (gIsDrag.line) {
+    if (gItemPressed.line) {
         const currLine = meme.lines[meme.selectedLineIdx]
         currLine.x = pos.x
         currLine.y = pos.y
     }
-    else {
+    else if (gItemPressed.sticker) {
         const currSticker = meme.stickers[meme.selectedStickerIdx]
         currSticker.x = pos.x
         currSticker.y = pos.y
+    } else {
+        const currSticker = meme.stickers[meme.selectedStickerIdx]
+        currSticker.size += (pos.y - (currSticker.y + currSticker.size + 7)) / 50;
+
     }
     renderCanvas()
 }
 
 function onCancelDrag() {
-    gIsDrag.line = false
-    gIsDrag.sticker = false
+    gItemPressed.line = false
+    gItemPressed.sticker = false
+    gItemPressed["sticker-resize"] = false;
 }
 
 function resizeCanvas(elImg) {
