@@ -24,7 +24,7 @@ function renderPics() {
 
 function createPics() {
     gImgs = []
-    for (var i = 1; i < 19; i++) {
+    for (var i = 1; i < 26; i++) {
         gImgs.push({ id: i, url: `img/${i}.jpg` })
     }
 }
