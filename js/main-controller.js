@@ -16,6 +16,8 @@ function onInit() {
     renderWords()
     renderStickers()
     gCanvas.addEventListener("touchstart", onTouch, false);
+    gCanvas.addEventListener("touchmove", onMoveItem, false);
+    gCanvas.addEventListener("touchend", onCancelDrag, false);
     gStyleOpts = { font: 'Impact', color: 'white' }
 }
 
@@ -233,6 +235,10 @@ function onDownload(elLink) {
 
 function onMousePress(ev) {
     const pos = { x: ev.offsetX, y: ev.offsetY }
+    onPress(pos);
+}
+
+function onPress(pos) {
     const meme = getMeme();
     meme.lines.forEach((line, idx) => {
         let txtXStart;
@@ -272,7 +278,12 @@ function onMousePress(ev) {
 
 function onMoveItem(ev) {
     if (!gItemPressed.line && !gItemPressed.sticker && !gItemPressed["sticker-resize"]) return
-    const pos = { x: ev.offsetX, y: ev.offsetY }
+    if (!ev.targetTouches) {
+        var pos = { x: ev.offsetX, y: ev.offsetY }
+    }
+    else {
+        var pos = { x: ev.targetTouches[0].clientX - ((window.innerWidth - gCanvas.width) / 2), y: ev.targetTouches[0].clientY - 70 }
+    }
     const meme = getMeme()
     if (gItemPressed.line) {
         const currLine = meme.lines[meme.selectedLineIdx]
@@ -335,8 +346,8 @@ function onChangeStickerPage() {
 
 function onTouch(ev) {
     ev.preventDefault()
-    const touch = { x: ev.targetTouches[0].clientX - 30, y: ev.targetTouches[0].clientY - 30 }
-    console.log(touch);
+    const touch = { x: ev.targetTouches[0].clientX - ((window.innerWidth - gCanvas.width) / 2), y: ev.targetTouches[0].clientY - 70 }
+    onPress(touch)
 }
 
 function onResizeCanvas(elImg) {
