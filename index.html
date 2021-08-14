@@ -26,8 +26,8 @@
     <main class="main-content main-layout">
         <section class="saved-memes main-layout" hidden>
         </section>
-        <section class="meme-editor" hidden>
-            <canvas onmousedown="onMousePress(event)" onmousemove="onMoveItem(event)" onmouseup="onCancelDrag()"
+        <section class="meme-editor" onmouseup="onCancelDrag()" hidden>
+            <canvas onmousedown="onMousePress(event)" onmousemove="onMoveItem(event)" 
                 class="canvas" height="500" width="500"></canvas>
             <div class="controls">
                 <input onkeyup="onChangeText(this.value)" name="line" type="text" placeholder="your text here">

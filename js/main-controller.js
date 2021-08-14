@@ -279,11 +279,11 @@ function onMoveItem(ev) {
     }
     else if (gItemPressed.sticker) {
         const currSticker = meme.stickers[meme.selectedStickerIdx]
-        currSticker.x = pos.x
-        currSticker.y = pos.y
+        currSticker.x = pos.x - currSticker.size / 2
+        currSticker.y = pos.y - currSticker.size / 2
     } else {
         const currSticker = meme.stickers[meme.selectedStickerIdx]
-        currSticker.size += (pos.y - (currSticker.y + currSticker.size + 7)) / 50;
+        if (currSticker.y < pos.y) currSticker.size += (pos.y - (currSticker.y + currSticker.size + 7)) / 50;
 
     }
     renderCanvas()
