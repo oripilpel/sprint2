@@ -15,6 +15,7 @@ function onInit() {
     loadMemes()
     renderWords()
     renderStickers()
+    gCanvas.addEventListener("touchstart", onTouch, false);
     gStyleOpts = { font: 'Impact', color: 'white' }
 }
 
@@ -152,6 +153,7 @@ function renderCanvas(isDownloading) {
 function setCanvas() {
     gCanvas = document.querySelector('.canvas')
     gCtx = gCanvas.getContext('2d');
+    gCanvas.width = window.innerWidth - 60
 }
 
 function getElImage(imgId) {
@@ -329,4 +331,20 @@ function onChangeStickerPage() {
     if (gStickersPage) gStickersPage = 0
     else gStickersPage = 1
     renderStickers()
+}
+
+function onTouch(ev) {
+    ev.preventDefault()
+    const touch = { x: ev.targetTouches[0].clientX - 30, y: ev.targetTouches[0].clientY - 30 }
+    console.log(touch);
+}
+
+function onResizeCanvas(elImg) {
+    if (window.innerWidth < 560) {
+        if (!getMeme().selectedImgId) return
+        const selectedElImg = (!elImg) ? getElImage(getMeme().selectedImgId) : elImg
+        gCanvas.width = window.innerWidth - 60
+        resizeCanvas(selectedElImg)
+        renderCanvas()
+    }
 }
