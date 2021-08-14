@@ -153,7 +153,7 @@ function renderCanvas(isDownloading) {
 function setCanvas() {
     gCanvas = document.querySelector('.canvas')
     gCtx = gCanvas.getContext('2d');
-    gCanvas.width = window.innerWidth - 60
+    gCanvas.width = ((window.innerWidth - 60) > 500) ? 500 : window.innerWidth - 60
 }
 
 function getElImage(imgId) {
