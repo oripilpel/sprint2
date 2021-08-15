@@ -1,12 +1,9 @@
 'use-strict'
 const gKeywords = { all: 1, tv: 1, animals: 1, politics: 1, children: 1, laugh: 1 }
 let gImgs;
-let gCanvas;
-let gCtx;
 let gStyleOpts;
 const gItemPressed = { line: false, sticker: false, 'sticker-resize': false };
 let gStickersPage = 0;
-
 
 function onInit() {
     createPics()
@@ -15,9 +12,7 @@ function onInit() {
     loadMemes()
     renderWords()
     renderStickers()
-    gCanvas.addEventListener("touchstart", onTouch, false);
-    gCanvas.addEventListener("touchmove", onMoveItem, false);
-    gCanvas.addEventListener("touchend", onCancelDrag, false);
+    setListeners()
     gStyleOpts = { font: 'Impact', color: 'white' }
 }
 
@@ -68,12 +63,14 @@ function onGalleryClick() {
     document.querySelector('.meme-editor').classList.remove('show');
     document.querySelector('.saved-memes').style.display = 'none';
     document.querySelector('.photo-gallery').style.display = 'block';
+    document.body.removeEventListener('keydown', onKeyPress, true);
     document.querySelector('[name="line"]').value = '';
     gEditIndex = -1;
 }
 
 function onImgClick(elImg, isEdit) {
     document.querySelector('.meme-editor').classList.add('show');
+    document.body.addEventListener('keydown', onKeyPress, true);
     document.querySelector('.saved-memes').style.display = 'none';
     document.querySelector('.photo-gallery').style.display = 'none';
     resizeCanvas(elImg)
@@ -124,96 +121,6 @@ function onAlignText(direction) {
     renderCanvas()
 }
 
-function renderCanvas(isDownloading) {
-    const meme = getMeme();
-    gCtx.clearRect(0, 0, gCanvas.height, gCanvas.width)
-    drawImg(getElImage(meme.selectedImgId))
-    if (!meme.lines) return;
-    meme.lines.forEach((line, idx) => {
-        setAlign(line.align);
-        gCtx.save();
-        gCtx.font = `${line.size}px ${gStyleOpts.font}`
-        gCtx.fillStyle = line.color
-        gCtx.lineWidth = 4;
-        gCtx.strokeText(line.txt, line.x, line.y);
-        gCtx.fillText(line.txt, line.x, line.y);
-        if (meme.selectedLineIdx === idx && !isDownloading) markChoosenLine(line)
-    })
-    if (meme.stickers && meme.stickers.length) {
-        meme.stickers.forEach(sticker => {
-            const img = new Image();
-            img.src = sticker.src
-            gCtx.drawImage(img, sticker.x, sticker.y, sticker.size, sticker.size)
-            gCtx.beginPath();
-            if (!isDownloading) {
-                gCtx.arc(sticker.x + sticker.size + 7, sticker.y + sticker.size + 7, 7, 0, 2 * Math.PI);
-                gCtx.fillStyle = 'pink'
-                gCtx.fill();
-            }
-        })
-    }
-}
-
-function setCanvas() {
-    gCanvas = document.querySelector('.canvas')
-    gCtx = gCanvas.getContext('2d');
-    gCanvas.width = ((window.innerWidth - 60) > 500) ? 500 : window.innerWidth - 60
-}
-
-function getElImage(imgId) {
-    return document.querySelector(`[data-imgNum="${imgId}"]`)
-}
-
-function drawImg(elImg) {
-    gCtx.drawImage(elImg, 0, 0, gCanvas.width, gCanvas.height)
-}
-
-function getCanvasWidth() {
-    return gCanvas.width
-}
-
-function getCanvasHeight() {
-    return gCanvas.height
-}
-
-function setAlign(direction) {
-    switch (direction) {
-        case 'right':
-            gCtx.textAlign = 'end'
-            break;
-        case 'left':
-            gCtx.textAlign = 'start'
-            break;
-        case 'center':
-            gCtx.textAlign = 'center'
-            break;
-    }
-}
-
-function markChoosenLine(line) {
-    const txtWidth = gCtx.measureText(line.txt).width;
-    line.width = txtWidth;
-    gCtx.save()
-    gCtx.strokeStyle = '#ffffff'
-    gCtx.lineWidth = 3;
-    gCtx.beginPath();
-    switch (line.align) {
-        case 'right':
-            var rectStart = line.x - txtWidth
-            break;
-        case 'left':
-            var rectStart = line.x
-            break;
-        case 'center':
-            var rectStart = line.x - txtWidth / 2
-            break;
-    }
-    gCtx.strokeRect(rectStart - 5, line.y - line.size, txtWidth + 10, line.size + 5)
-    gCtx.closePath();
-    gCtx.restore()
-
-}
-
 function onRemoveLine() {
     const meme = getMeme();
     if (!meme.lines || !meme.lines.length) return
@@ -230,7 +137,7 @@ function onSelectFont(font) {
 
 function onDownload(elLink) {
     renderCanvas(true)
-    const data = gCanvas.toDataURL()
+    const data = getCanvas().toDataURL()
     elLink.href = data;
     renderCanvas()
 }
@@ -284,7 +191,7 @@ function onMoveItem(ev) {
         var pos = { x: ev.offsetX, y: ev.offsetY }
     }
     else {
-        var pos = { x: ev.targetTouches[0].clientX - ((window.innerWidth - gCanvas.width) / 2), y: ev.targetTouches[0].clientY - 70 }
+        var pos = { x: ev.targetTouches[0].clientX - ((window.innerWidth - getCanvasWidth()) / 2), y: ev.targetTouches[0].clientY - 70 }
     }
     const meme = getMeme()
     if (gItemPressed.line) {
@@ -308,12 +215,6 @@ function onCancelDrag() {
     gItemPressed.line = false
     gItemPressed.sticker = false
     gItemPressed["sticker-resize"] = false;
-}
-
-function resizeCanvas(elImg) {
-    const imgH = elImg.height
-    const imgW = elImg.width
-    gCanvas.height = gCanvas.width * imgH / imgW;
 }
 
 function onFilterPics(filter) {
@@ -348,7 +249,7 @@ function onChangeStickerPage() {
 
 function onTouch(ev) {
     ev.preventDefault()
-    const touch = { x: ev.targetTouches[0].clientX - ((window.innerWidth - gCanvas.width) / 2), y: ev.targetTouches[0].clientY - 70 }
+    const touch = { x: ev.targetTouches[0].clientX - ((window.innerWidth - getCanvasWidth()) / 2), y: ev.targetTouches[0].clientY - 70 }
     onPress(touch)
 }
 
@@ -356,7 +257,7 @@ function onResizeCanvas(elImg) {
     if (window.innerWidth < 560) {
         if (!getMeme().selectedImgId) return
         const selectedElImg = (!elImg) ? getElImage(getMeme().selectedImgId) : elImg
-        gCanvas.width = window.innerWidth - 60
+        getCanvasWidth() = window.innerWidth - 60
         resizeCanvas(selectedElImg)
         renderCanvas()
     }
@@ -379,4 +280,17 @@ function loadImageFromInput(ev, onImageReady) {
         renderPics()
     }
     reader.readAsDataURL(ev.target.files[0])
+}
+
+function onKeyPress() {
+    const excludedKeys = ["Tab", "CapsLock", "Shift", "Control", "Alt", "ContextMenu", "Delete", "Insert", "Home", "End", "PageDown", "PageUp", "NumLock", "Enter", "Backspace", "Escape"]
+    const elLine = document.querySelector('[name="line"]')
+    if (!excludedKeys.includes(event.key)) {
+        elLine.value += event.key
+        onChangeText(elLine.value)
+    } else if (event.key === 'Enter') onAddLine()
+    else if (event.key === 'Backspace') {
+        elLine.value = elLine.value.slice(0, elLine.value.length - 1)
+        onChangeText(elLine.value)
+    }
 }
