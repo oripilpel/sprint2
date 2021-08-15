@@ -32,7 +32,8 @@
                     width="500"></canvas>
             </div>
             <div class="controls">
-                <input onkeyup="onChangeText(this.value,event)" name="line" type="text" placeholder="your text here">
+                <input data-ori="input" onkeyup="onChangeText(this.value,true)" name="line" type="text"
+                    placeholder="your text here">
                 <button class="add-line-btn" onclick="onAddLine()"><img src="icons/add.png"></button>
                 <button class="switch-line-btn" onclick="onSwitchItem()"><img
                         src="icons/up-and-down-opposite-double-arrows-side-by-side.png"></button>

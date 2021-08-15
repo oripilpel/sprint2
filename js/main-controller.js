@@ -119,7 +119,9 @@ function clearLine() {
     document.querySelector('[name="line"]').value = ''
 }
 
-function onChangeText(text, ev) {
+function onChangeText(text, isInputWriting) {
+    // console.log(document.activeElement)
+    // if (isInputWriting) return
     changeText(text);
     renderCanvas()
 }
@@ -306,14 +308,18 @@ function loadImageFromInput(ev, onImageReady) {
 }
 
 function onKeyPress() {
-    const excludedKeys = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'Tab', 'CapsLock', 'Shift', 'Control', 'Alt', 'ContextMenu', 'Delete', 'Insert', 'Home', 'End', 'PageDown', 'PageUp', 'NumLock', 'Enter', 'Backspace', 'Escape', 'Unidentified']
+    const excludedKeys = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'Tab', 'CapsLock', 'Shift', 'Control', 'Alt', 'ContextMenu', 'Delete', 'Insert', 'Home', 'End', 'PageDown', 'PageUp', 'NumLock', 'Enter', 'Backspace', 'Escape', 'Unidentified', '+', '-']
     const elLine = document.querySelector('[name="line"]')
-    if (!excludedKeys.includes(event.key)) {
-        elLine.value += event.key
-        onChangeText(elLine.value)
-    } else if (event.key === 'Enter') onAddLine()
+    if (event.key === 'Enter') onAddLine()
     else if (event.key === 'Backspace') {
         elLine.value = elLine.value.slice(0, elLine.value.length - 1)
+        onChangeText(elLine.value)
+    } else if (event.key === 'Delete') onRemoveItem()
+    else if (event.key === '+') onChangeFontSize(2)
+    else if (event.key === '-') onChangeFontSize(-2)
+    if (document.activeElement.dataset.ori) return
+    else if (!excludedKeys.includes(event.key)) {
+        elLine.value += event.key
         onChangeText(elLine.value)
     }
 }
