@@ -4,16 +4,17 @@ let gMeme = {};
 
 function setMeme(elImg, isEdit) {
     gMeme.selectedImgId = +elImg.dataset.imgnum
-    gMeme.selectedLineIdx = 0;
-    gMeme.selectedStickerIdx = 0;
+    gMeme.linesCnt = 0;
+    gMeme.selectedItemIdx = 0;
     if (!isEdit) {
-        gMeme.lines = [];
-        gMeme.stickers = []
+        gMeme.items = []
     }
 }
 
 function addLine() {
-    gMeme.selectedLineIdx++
+    // if (gMeme.selectedItemIdx < gMeme.items.length - 1) return
+    gMeme.selectedItemIdx = gMeme.items.length
+    setLinesCount()
 }
 
 function getMeme() {
@@ -21,49 +22,51 @@ function getMeme() {
 }
 
 function ChangeFontSize(diff) {
-    if (!gMeme.lines || !gMeme.lines.length) return
-    gMeme.lines[gMeme.selectedLineIdx].size += diff;
+    if (!gMeme.items || !gMeme.items.length) return
+    gMeme.items[gMeme.selectedItemIdx].size += diff;
 }
 
-function switchLine() {
-    if (!gMeme.lines || !gMeme.lines.length) return
-    if (gMeme.selectedLineIdx >= gMeme.lines.length - 1) gMeme.selectedLineIdx = 0;
-    else gMeme.selectedLineIdx++
+function switchItem() {
+    if (!gMeme.items || !gMeme.items.length) return
+    if (gMeme.selectedItemIdx >= gMeme.items.length - 1) gMeme.selectedItemIdx = 0;
+    else gMeme.selectedItemIdx++
 }
 
 function changeText(text) {
-    if (!gMeme.lines || !gMeme.lines[gMeme.selectedLineIdx]) {
-        line = { txt: text }
-        if (gMeme.lines) {
-            if (!gMeme.lines.length) {
-                gMeme.lines = []
+    // if (gMeme.items[gMeme.selectedItemIdx].type === 'sticker') return
+    if (!gMeme.items || !gMeme.items[gMeme.selectedItemIdx]) {
+        const line = { txt: text }
+        if (gMeme.items) {
+
+            if (!gMeme.linesCnt) {
                 line.y = 40;
             }
-            else if (gMeme.lines.length === 1) {
-                line.y = getCanvasHeight() - 10
+            else if (gMeme.linesCnt === 1) {
+                line.y = getCanvasHeight() - 10;
             }
             else {
-                line.y = getCanvasHeight() / 2 + 30
+                line.y = getCanvasHeight() / 2 + 30;
             }
         }
         else {
-            gMeme.lines = []
+            gMeme.items = [];
             line.y = 40;
         }
-        line.x = getCanvasWidth() / 2
-        line.align = 'center'
-        line.size = 30
-        line.color = gStyleOpts.color
-        gMeme.lines.push(line);
+        line.type = 'line';
+        line.x = getCanvasWidth() / 2;
+        line.align = 'center';
+        line.size = 30;
+        line.color = gStyleOpts.color;
+        gMeme.items.push(line);
     }
-    else {
-        gMeme.lines[gMeme.selectedLineIdx].txt = text;
+    else if (gMeme.items[gMeme.selectedItemIdx].type !== 'sticker') {
+        gMeme.items[gMeme.selectedItemIdx].txt = text;
     }
 }
 
 function textAlign(direction) {
-    if (!gMeme.lines || !gMeme.lines.length) return
-    const currLine = gMeme.lines[gMeme.selectedLineIdx]
+    if (!gMeme.items || !gMeme.items.length || gMeme.items[gMeme.selectedItemIdx].type === 'sticker') return
+    const currLine = gMeme.items[gMeme.selectedItemIdx]
     switch (direction) {
         case 'right':
             currLine.x = getCanvasWidth() - 10
@@ -85,10 +88,21 @@ function reSetMeme(meme) {
 }
 
 function changeColor(color) {
-    if (!gMeme.lines || !gMeme.lines.length) return
-    gMeme.lines[gMeme.selectedLineIdx].color = color;
+    if (!gMeme.items || !gMeme.items.length || gMeme.items[gMeme.selectedItemIdx].type === 'sticker') return
+    gMeme.items[gMeme.selectedItemIdx].color = color;
 }
 
 function addSticker(elImg) {
-    gMeme.stickers.push({ src: elImg.src, x: (getCanvasWidth() / 2) - 20, y: (getCanvasHeight() / 2) - 20, size: 40 })
+    setLinesCount();
+    gMeme.items.push({ type: 'sticker', src: elImg.src, x: (getCanvasWidth() / 2) - 20, y: (getCanvasHeight() / 2) - 20, size: 40 })
+    if (!gMeme.selectedItemIdx && gMeme.items.length === 1) return
+    gMeme.selectedItemIdx = gMeme.items.length - 1
+}
+
+function setLinesCount() {
+    var count = 0
+    gMeme.items.forEach(item => {
+        if (item.type === 'line') count++
+    })
+    gMeme.linesCnt = count
 }

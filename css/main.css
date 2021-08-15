@@ -70,7 +70,7 @@ body {
     display: grid;
     padding: 25px 26.25px;
     gap: 10.5px 9px;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
 .gallery img {
@@ -105,6 +105,7 @@ body {
 
 .meme-editor.show {
     display: flex;
+    align-items: center;
 }
 
 .controls {
@@ -112,6 +113,7 @@ body {
     grid-template-columns: repeat(5, 45px);
     grid-template-areas: "txt txt txt txt txt" ". switch add remove . " "increase-font decrease-font align-left align-center align-right" "font font font stroke paint" "icon icon icon icon icon" "download download save share share";
     gap: 9px;
+    max-height: 345px;
 }
 
 .meme-editor a:hover {
@@ -160,7 +162,6 @@ footer small {
     border-radius: 0.375rem;
     border: none;
     height: 50px;
-
 }
 
 .add-line-btn {
@@ -193,6 +194,10 @@ footer small {
 
 .remove-btn {
     grid-area: remove;
+}
+
+.share-btn {
+    grid-area: share;
 }
 
 .stickers-gallery {

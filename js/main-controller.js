@@ -2,7 +2,7 @@
 const gKeywords = { all: 1, tv: 1, animals: 1, politics: 1, children: 1, laugh: 1 }
 let gImgs;
 let gStyleOpts;
-const gItemPressed = { line: false, sticker: false, 'sticker-resize': false };
+const gItemPressed = { item: false, 'sticker-resize': false };
 let gStickersPage = 0;
 
 function onInit() {
@@ -92,7 +92,11 @@ function onChangeColor(color) {
 
 function onAddLine() {
     const elInput = document.querySelector('[name="line"]');
-    if (!elInput.value.trim()) return
+    if (!elInput.value.trim()) {
+        const meme = getMeme()
+        meme.selectedItemIdx = meme.items.length
+        return
+    }
     elInput.value = ''
     addLine();
     renderCanvas();
@@ -103,15 +107,19 @@ function onChangeFontSize(diff) {
     renderCanvas()
 }
 
-function onSwitchLine() {
-    switchLine();
+function onSwitchItem() {
+    switchItem();
     const meme = getMeme();
     const elInput = document.querySelector('[name="line"]')
-    elInput.value = (!meme.lines || !meme.lines.length) ? '' : meme.lines[meme.selectedLineIdx].txt
+    elInput.value = (!meme.items || !meme.items.length) ? '' : meme.items[meme.selectedItemIdx].txt
     renderCanvas()
 }
 
-function onChangeText(text) {
+function clearLine() {
+    document.querySelector('[name="line"]').value = ''
+}
+
+function onChangeText(text, ev) {
     changeText(text);
     renderCanvas()
 }
@@ -121,12 +129,13 @@ function onAlignText(direction) {
     renderCanvas()
 }
 
-function onRemoveLine() {
+function onRemoveItem() {
     const meme = getMeme();
-    if (!meme.lines || !meme.lines.length) return
-    if (meme.lines.length === 1) document.querySelector('[name="line"]').value = ''
-    meme.lines.splice(meme.selectedLineIdx, 1);
-    switchLine()
+    if (!meme.items || !meme.items.length) return
+    if (meme.items.length === 1) document.querySelector('[name="line"]').value = ''
+    meme.items.splice(meme.selectedItemIdx, 1);
+    setLinesCount()
+    switchItem()
     renderCanvas()
 }
 
@@ -149,44 +158,49 @@ function onMousePress(ev) {
 
 function onPress(pos) {
     const meme = getMeme();
-    meme.lines.forEach((line, idx) => {
-        let txtXStart;
-        switch (line.align) {
-            case 'left':
-                txtXStart = line.x
-                break;
-            case 'center':
-                txtXStart = line.x - line.width / 2
-                break;
-            case 'right':
-                txtXStart = line.x - line.width
-                break;
+    meme.items.forEach((item, idx) => {
+        if (item.type === 'line') {
+            let txtXStart;
+            switch (item.align) {
+                case 'left':
+                    txtXStart = item.x
+                    break;
+                case 'center':
+                    txtXStart = item.x - item.width / 2
+                    break;
+                case 'right':
+                    txtXStart = item.x - item.width
+                    break;
+            }
+            if (pos.x >= txtXStart &&
+                pos.x <= txtXStart + item.width &&
+                pos.y <= item.y &&
+                pos.y >= item.y - item.size) {
+                meme.selectedItemIdx = idx
+                document.querySelector('[name="line"]').value = item.txt
+                renderCanvas()
+                gItemPressed.item = true;
+                return
+            }
         }
-        if (pos.x >= txtXStart && pos.x <= txtXStart + line.width && pos.y <= line.y && pos.y >= line.y - line.size) {
-            meme.selectedLineIdx = idx
-            document.querySelector('[name="line"]').value = line.txt
-            renderCanvas()
-            gItemPressed.line = true;
-            return
-        }
-    })
-    meme.stickers.forEach((sticker, idx) => {
-        if (pos.x >= sticker.x + sticker.size && pos.x <= sticker.x + sticker.size + 14 && pos.y >= sticker.y + sticker.size && pos.y <= sticker.y + sticker.size + 14) {
-            gItemPressed["sticker-resize"] = true;
-            meme.selectedStickerIdx = idx;
-            return;
-        }
-        if (pos.x >= sticker.x && pos.x <= sticker.x + sticker.size && pos.y >= sticker.y && pos.y <= sticker.y + sticker.size) {
-            meme.selectedStickerIdx = idx
-            gItemPressed.sticker = true;
-            return
-        }
-    })
+        else {
 
+            if (pos.x >= item.x + item.size && pos.x <= item.x + item.size + 14 && pos.y >= item.y + item.size && pos.y <= item.y + item.size + 14) {
+                gItemPressed["sticker-resize"] = true;
+                meme.selectedItemIdx = idx;
+                return;
+            }
+            if (pos.x >= item.x && pos.x <= item.x + item.size && pos.y >= item.y && pos.y <= item.y + item.size) {
+                meme.selectedItemIdx = idx
+                gItemPressed.item = true;
+                return
+            }
+        }
+    })
 }
 
 function onMoveItem(ev) {
-    if (!gItemPressed.line && !gItemPressed.sticker && !gItemPressed["sticker-resize"]) return
+    if (!gItemPressed.item && !gItemPressed["sticker-resize"]) return
     if (!ev.targetTouches) {
         var pos = { x: ev.offsetX, y: ev.offsetY }
     }
@@ -194,26 +208,34 @@ function onMoveItem(ev) {
         var pos = { x: ev.targetTouches[0].clientX - ((window.innerWidth - getCanvasWidth()) / 2), y: ev.targetTouches[0].clientY - 70 }
     }
     const meme = getMeme()
-    if (gItemPressed.line) {
-        const currLine = meme.lines[meme.selectedLineIdx]
-        currLine.x = pos.x
-        currLine.y = pos.y
+    if (gItemPressed.item && meme.items[meme.selectedItemIdx].type === 'line') {
+        const currLine = meme.items[meme.selectedItemIdx]
+        switch (currLine.align) {
+            case 'right':
+                currLine.x = pos.x + currLine.width / 2
+                break;
+            case 'left':
+                currLine.x = pos.x - currLine.width / 2
+                break;
+            case 'center':
+                currLine.x = pos.x
+                break;
+        }
+        currLine.y = pos.y + (currLine.size / 2)
     }
-    else if (gItemPressed.sticker) {
-        const currSticker = meme.stickers[meme.selectedStickerIdx]
+    else if (gItemPressed.item && meme.items[meme.selectedItemIdx].type === 'sticker') {
+        const currSticker = meme.items[meme.selectedItemIdx]
         currSticker.x = pos.x - currSticker.size / 2
         currSticker.y = pos.y - currSticker.size / 2
     } else {
-        const currSticker = meme.stickers[meme.selectedStickerIdx]
+        const currSticker = meme.items[meme.selectedItemIdx]
         if (currSticker.y < pos.y) currSticker.size += (pos.y - (currSticker.y + currSticker.size + 7)) / 50;
-
     }
     renderCanvas()
 }
 
 function onCancelDrag() {
-    gItemPressed.line = false
-    gItemPressed.sticker = false
+    gItemPressed.item = false
     gItemPressed["sticker-resize"] = false;
 }
 
@@ -238,6 +260,7 @@ function renderStickers() {
 
 function onStickerClick(elSticker) {
     addSticker(elSticker)
+    document.querySelector('[name="line"]').value = ''
     renderCanvas()
 }
 
@@ -257,7 +280,7 @@ function onResizeCanvas(elImg) {
     if (window.innerWidth < 560) {
         if (!getMeme().selectedImgId) return
         const selectedElImg = (!elImg) ? getElImage(getMeme().selectedImgId) : elImg
-        getCanvasWidth() = window.innerWidth - 60
+        getCanvas().width = window.innerWidth - 60
         resizeCanvas(selectedElImg)
         renderCanvas()
     }
@@ -283,7 +306,7 @@ function loadImageFromInput(ev, onImageReady) {
 }
 
 function onKeyPress() {
-    const excludedKeys = ["Tab", "CapsLock", "Shift", "Control", "Alt", "ContextMenu", "Delete", "Insert", "Home", "End", "PageDown", "PageUp", "NumLock", "Enter", "Backspace", "Escape"]
+    const excludedKeys = ['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'Tab', 'CapsLock', 'Shift', 'Control', 'Alt', 'ContextMenu', 'Delete', 'Insert', 'Home', 'End', 'PageDown', 'PageUp', 'NumLock', 'Enter', 'Backspace', 'Escape', 'Unidentified']
     const elLine = document.querySelector('[name="line"]')
     if (!excludedKeys.includes(event.key)) {
         elLine.value += event.key
@@ -292,5 +315,19 @@ function onKeyPress() {
     else if (event.key === 'Backspace') {
         elLine.value = elLine.value.slice(0, elLine.value.length - 1)
         onChangeText(elLine.value)
+    }
+}
+
+async function onShare() {
+    const img = getCanvas().toDataURL()
+    if (navigator.share) {
+        navigator.share({
+            url: img,
+            title: 'Photo'
+        })
+            .then(() => console.log('Share was successful.'))
+            .catch((error) => console.log('Sharing failed', error));
+    } else {
+        console.log(`Your system doesn't support sharing files.`);
     }
 }

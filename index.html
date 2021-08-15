@@ -32,9 +32,9 @@
                     width="500"></canvas>
             </div>
             <div class="controls">
-                <input onkeyup="onChangeText(this.value)" name="line" type="text" placeholder="your text here">
+                <input onkeyup="onChangeText(this.value,event)" name="line" type="text" placeholder="your text here">
                 <button class="add-line-btn" onclick="onAddLine()"><img src="icons/add.png"></button>
-                <button class="switch-line-btn" onclick="onSwitchLine()"><img
+                <button class="switch-line-btn" onclick="onSwitchItem()"><img
                         src="icons/up-and-down-opposite-double-arrows-side-by-side.png"></button>
                 <button class="font-increase-btn" onclick="onChangeFontSize(2)"><img
                         src="icons/increase font - icon.png"></button>
@@ -46,9 +46,10 @@
                         src="icons/center-text-alignment.png"></button>
                 <button class="align-right-btn" onclick="onAlignText('right')"><img
                         src="icons/align-to-right.png"></button>
-                <button class="remove-btn" onclick="onRemoveLine()"><img src=" icons/trash.png"></button>
+                <button class="remove-btn" onclick="onRemoveItem()"><img src=" icons/trash.png"></button>
                 <a class="download-btn" onclick="onDownload(this)" href="" download="myphoto">Download</a>
                 <a class="save-btn" onclick="onSave()">Save</a>
+                <a class="share-btn" onclick="onShare()">Share</a>
                 <select name="font-selection" onchange="onSelectFont(this.value)">
                     <option value="Impact">IMPACT</option>
                     <option value="Arial">ARIAL</option>

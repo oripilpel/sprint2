@@ -54,13 +54,13 @@ function loadMemes() {
 function onSave() {
     renderCanvas(true)
     if (gEditIndex < 0) {
-        const data = gCanvas.toDataURL('image/jpeg', 1)
+        const img = getCanvas().toDataURL('image/jpeg', 0.5)
         gSavedMemes.push({
-            img: data, meme: JSON.parse(JSON.stringify(getMeme()))
+            img, meme: JSON.parse(JSON.stringify(getMeme()))
         })
     }
     else {
-        gSavedMemes[gEditIndex].img = gCanvas.toDataURL()
+        gSavedMemes[gEditIndex].img = getCanvas().toDataURL()
         gSavedMemes[gEditIndex].meme = JSON.parse(JSON.stringify(getMeme()))
     }
     saveMemes()

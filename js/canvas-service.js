@@ -16,30 +16,32 @@ function renderCanvas(isDownloading) {
     const meme = getMeme();
     gCtx.clearRect(0, 0, gCanvas.height, gCanvas.width)
     drawImg(getElImage(meme.selectedImgId))
-    if (!meme.lines) return;
-    meme.lines.forEach((line, idx) => {
-        setAlign(line.align);
-        gCtx.save();
-        gCtx.font = `${line.size}px ${gStyleOpts.font}`
-        gCtx.fillStyle = line.color
-        gCtx.lineWidth = 4;
-        gCtx.strokeText(line.txt, line.x, line.y);
-        gCtx.fillText(line.txt, line.x, line.y);
-        if (meme.selectedLineIdx === idx && !isDownloading) markChoosenLine(line)
-    })
-    if (meme.stickers && meme.stickers.length) {
-        meme.stickers.forEach(sticker => {
+    if (!meme.items) return;
+    meme.items.forEach((item, idx) => {
+        if (item.type === 'line') {
+            setAlign(item.align);
+            gCtx.save();
+            gCtx.font = `${item.size}px ${gStyleOpts.font}`
+            gCtx.fillStyle = item.color
+            gCtx.lineWidth = 4;
+            gCtx.strokeText(item.txt, item.x, item.y);
+            gCtx.fillText(item.txt, item.x, item.y);
+            if (meme.selectedItemIdx === idx && !isDownloading) markChoosenItem(item)
+        }
+        else {
             const img = new Image();
-            img.src = sticker.src
-            gCtx.drawImage(img, sticker.x, sticker.y, sticker.size, sticker.size)
+            img.src = item.src
+            gCtx.drawImage(img, item.x, item.y, item.size, item.size)
             gCtx.beginPath();
             if (!isDownloading) {
-                gCtx.arc(sticker.x + sticker.size + 7, sticker.y + sticker.size + 7, 7, 0, 2 * Math.PI);
+                gCtx.arc(item.x + item.size + 7, item.y + item.size + 7, 7, 0, 2 * Math.PI);
                 gCtx.fillStyle = 'pink'
                 gCtx.fill();
             }
-        })
-    }
+            if (meme.selectedItemIdx === idx && !isDownloading) markChoosenItem(item)
+        }
+    })
+
 }
 
 function drawImg(elImg) {
@@ -72,25 +74,30 @@ function setAlign(direction) {
     }
 }
 
-function markChoosenLine(line) {
-    const txtWidth = gCtx.measureText(line.txt).width;
-    line.width = txtWidth;
+function markChoosenItem(item) {
     gCtx.save()
     gCtx.strokeStyle = '#ffffff'
     gCtx.lineWidth = 3;
     gCtx.beginPath();
-    switch (line.align) {
-        case 'right':
-            var rectStart = line.x - txtWidth
-            break;
-        case 'left':
-            var rectStart = line.x
-            break;
-        case 'center':
-            var rectStart = line.x - txtWidth / 2
-            break;
+    if (item.type === 'line') {
+        const txtWidth = gCtx.measureText(item.txt).width;
+        item.width = txtWidth;
+        switch (item.align) {
+            case 'right':
+                var rectStart = item.x - txtWidth
+                break;
+            case 'left':
+                var rectStart = item.x
+                break;
+            case 'center':
+                var rectStart = item.x - txtWidth / 2
+                break;
+        }
+        gCtx.strokeRect(rectStart - 5, item.y - item.size, txtWidth + 10, item.size + 5)
+    } else {
+
+        gCtx.strokeRect(item.x, item.y, item.size, item.size)
     }
-    gCtx.strokeRect(rectStart - 5, line.y - line.size, txtWidth + 10, line.size + 5)
     gCtx.closePath();
     gCtx.restore()
 }
