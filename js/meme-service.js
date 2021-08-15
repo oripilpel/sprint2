@@ -12,7 +12,6 @@ function setMeme(elImg, isEdit) {
 }
 
 function addLine() {
-    // if (gMeme.selectedItemIdx < gMeme.items.length - 1) return
     gMeme.selectedItemIdx = gMeme.items.length
     setLinesCount()
 }
@@ -33,7 +32,6 @@ function switchItem() {
 }
 
 function changeText(text) {
-    // if (gMeme.items[gMeme.selectedItemIdx].type === 'sticker') return
     if (!gMeme.items || !gMeme.items[gMeme.selectedItemIdx]) {
         const line = { txt: text }
         if (gMeme.items) {
