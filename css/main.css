@@ -80,6 +80,21 @@ body {
     cursor: pointer;
 }
 
+.user-img {
+    background-color: rgb(31, 31, 31);
+    color: rgb(202, 202, 202);
+}
+
+.user-img {
+    font-size: 3.7rem;
+    display: flex;
+    text-align: center;
+}
+
+.user-img input {
+    display: none;
+}
+
 .meme-editor {
     background-color: #e3e3e3;
     flex-direction: column;

@@ -39,7 +39,11 @@ function renderPics(filter) {
     } else imgs = gImgs
     elGallery.innerHTML = imgs.map((img, idx) => {
         return `<img data-imgNum=${idx + 1} onclick="onImgClick(this)" src="${img.url}">`
-    }).join('')
+    }).reverse().join('')
+    elGallery.innerHTML = `<div class="user-img">
+        <label for="file-upload">Upload Custom Image</label>
+        <input type="file" id="file-upload" onchange="onImgInput(event)" />
+        </div>` + elGallery.innerHTML
 }
 
 function createPics() {
@@ -149,8 +153,6 @@ function renderCanvas(isDownloading) {
         })
     }
 }
-
-
 
 function setCanvas() {
     gCanvas = document.querySelector('.canvas')
@@ -358,4 +360,23 @@ function onResizeCanvas(elImg) {
         resizeCanvas(selectedElImg)
         renderCanvas()
     }
+}
+
+function onImgInput(ev) {
+    loadImageFromInput(ev, function () { onImgClick(document.querySelector(`[data-imgnum="${gImgs.length}"]`)) })
+}
+
+function loadImageFromInput(ev, onImageReady) {
+    var reader = new FileReader()
+    reader.onload = function (event) {
+        var img = new Image()
+        img.onload = onImageReady.bind(null, img)
+        img.src = event.target.result
+        img.setAttribute('onclick', `onImgClick(this)`)
+        img.setAttribute('data-imgnum', `${gImgs.length + 1}`)
+        gImgs.push({ id: gImgs.length + 1, url: img.src, categories: [] })
+        const elGallery = document.querySelector('.gallery')
+        renderPics()
+    }
+    reader.readAsDataURL(ev.target.files[0])
 }
